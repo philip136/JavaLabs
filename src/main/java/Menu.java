@@ -12,12 +12,10 @@ public class Menu {
         System.out.println("Please select a salad");
         for (Salad salad: salads) System.out.println(salad.toString());
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            String saladName = scanner.nextLine();
-            List<Salad> neededSalad = salads.stream().filter(s -> s.getName().equalsIgnoreCase(saladName)).toList();
-            if (neededSalad.size() == 0) throw new ArrayIndexOutOfBoundsException("There is no salad with that name");
-            else System.out.println("Bon appetit");
-            return neededSalad.get(0);
-        }
+        String saladName = scanner.nextLine();
+        List<Salad> neededSalad = salads.stream().filter(s -> s.getName().equalsIgnoreCase(saladName)).toList();
+        if (neededSalad.size() == 0) throw new ArrayIndexOutOfBoundsException("There is no salad with that name");
+        else System.out.println("Bon appetit");
+        return neededSalad.get(0);
     }
 }
