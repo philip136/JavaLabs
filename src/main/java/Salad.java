@@ -33,8 +33,11 @@ public class Salad implements Serializable {
     private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
         try {
             objectInputStream.defaultReadObject();
-            Vegetable vegetable = (Vegetable) objectInputStream.readObject();
-            System.out.println(String.format("Deserializing vegetable: %s", vegetable));
+            for(int i=0; i < ingredients.size(); i++) {
+                Vegetable vegetable = (Vegetable) objectInputStream.readObject();
+                System.out.println(String.format("Deserializing vegetable: %s", vegetable));
+            }
+            
         } catch (EOFException e) {
             System.out.println(e.getMessage());
         }

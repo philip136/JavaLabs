@@ -7,7 +7,7 @@ import java.io.Serializable;
 @ToString
 public class Vegetable implements Comparable<Vegetable>, Serializable {
     @Getter
-    private Vegetables type;
+    private Vegetables type; // Value from enum
     @Getter
     private double weight; // Weight in gr
     @Getter
@@ -25,7 +25,7 @@ public class Vegetable implements Comparable<Vegetable>, Serializable {
     public double getTotalCalories() {
         return calories * (weight / 100.0);
     }
-    /* Compare vegetables by total calories */
+    /* Compare vegetables by calories */
     @Override
     public int compareTo(Vegetable vegetable) {
         return (int) (this.getCalories() - vegetable.getCalories());
