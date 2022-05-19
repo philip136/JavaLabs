@@ -4,13 +4,12 @@ import Exceptions.NotZeroOrNegativeException;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.InputMismatchException;
 import java.util.List;
 
 public class Main {
     private static final String pathToFile = Paths.get(System.getProperty("user.dir"), "sample.txt").toString();
 
-    public static void main(String[] args) throws ArrayIndexOutOfBoundsException, NotZeroOrNegativeException {
+    public static void main(String[] args) throws NotZeroOrNegativeException {
         // Lab №1,2
         Menu menu = new Menu();
         menu.showMenu();

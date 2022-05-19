@@ -1,15 +1,9 @@
 import Exceptions.NotZeroOrNegativeException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.ToString;
-import org.w3c.dom.ranges.Range;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.IntStream;
 
 @ToString
 public class Menu {
@@ -35,62 +29,73 @@ public class Menu {
     private static void printMenuOperations() {
         for (String operationName: operationNames) System.out.println(operationName);
     }
-    public void showMenu() throws IllegalArgumentException, NotZeroOrNegativeException {
+    public void showMenu() {
         boolean isRunning = true;
         while (isRunning) {
             printMenuOperations();
             int indexOperation = getInputAndNotify("Operation number").nextInt();
-            switch (indexOperation) {
-                case 1:
-                    String vegetableName = getInputAndNotify("Vegetable name").nextLine().toUpperCase();
-                    double vegetableWeight = Double.parseDouble(getInputAndNotify("Vegetable weight").nextLine().replace(",","."));
-                    double vegetableCalories = Double.parseDouble(getInputAndNotify("Vegetable calories").nextLine().replace(",","."));
-                    Vegetable vegetable = new Vegetable(Vegetables.valueOf(vegetableName), vegetableWeight, vegetableCalories);
-                    vegetables.add(vegetable);
-                    break;
-                case 2:
-                    System.out.println("Please select a vegetable index");
-                    for (int index=0; index < vegetables.size(); index++) {
-                        System.out.println(index + 1 + ": " + vegetables.get(index).getType().name());
-                    }
-                    int vegetableIndex = getInputAndNotify("").nextInt();
-                    Vegetable veg = vegetables.get(vegetableIndex - 1);
-                    vegetablesForSalad.add(veg);
-                    break;
-                case 3:
-                    String newSaladName = getInputAndNotify("Please enter a name for the salad").nextLine();
-                    boolean saladIsExist = salads.stream().anyMatch(s -> s.getName().equalsIgnoreCase(newSaladName));
-                    if (!saladIsExist | vegetablesForSalad.size() != 0) {
-                        Salad newSalad = Salad.builder()
-                                .name(newSaladName)
-                                .ingredients(vegetablesForSalad)
-                                .build();
-                        salads.add(newSalad);
-                    } else {
-                        System.out.println("Failed to create salad, salad is exist or vegetables for salad is empty");
-                    }
-                    break;
-                case 4:
-                    Salad desiredSalad = getSalad(getInputAndNotify("Salad name for searching").nextLine());
-                    desiredSalad.printSortedIngredients();
-                    desiredSalad.getTotalCalories();
-                    break;
-                case 5:
-                    for(Salad salad: salads) System.out.println(salad.toString());
-                    break;
-                case 6:
-                    Salad saladForFindVegetablesByRange = getSalad(
-                            getInputAndNotify("Salad name for searching").nextLine());
-                    int caloriesStartRange = getInputAndNotify("Calories start range").nextInt();
-                    int caloriesEndRange = getInputAndNotify("Calories end range").nextInt();
-                    for (Vegetable ingredient: saladForFindVegetablesByRange.getIngredients()) {
-                        if (ingredient.getCalories() > caloriesStartRange && ingredient.getCalories() < caloriesEndRange) {
-                            System.out.println(ingredient);
+            try {
+                switch (indexOperation) {
+                    case 1:
+                        String vegetableName = getInputAndNotify("Vegetable name").nextLine().toUpperCase();
+                        double vegetableWeight = Double.parseDouble(getInputAndNotify("Vegetable weight").nextLine().replace(",","."));
+                        double vegetableCalories = Double.parseDouble(getInputAndNotify("Vegetable calories").nextLine().replace(",","."));
+                        Vegetable vegetable = new Vegetable(Vegetables.valueOf(vegetableName), vegetableWeight, vegetableCalories);
+                        vegetables.add(vegetable);
+                        break;
+                    case 2:
+                        System.out.println("All vegetables for cooking salad");
+                        for (int index=0; index < vegetables.size(); index++) {
+                            System.out.println(index + 1 + ": " + vegetables.get(index).getType().name());
                         }
-                    }
-                    break;
-                case 0:
-                    isRunning = false;
+                        int vegetableIndex = getInputAndNotify("Select a vegetable index").nextInt();
+                        Vegetable veg = vegetables.get(vegetableIndex - 1);
+                        if (!vegetablesForSalad.contains(veg)) {
+                            vegetablesForSalad.add(veg);
+                            System.out.println(String.format("Vegetable %s was added to salad", veg.getType().name()));
+                        } else {
+                            System.out.println(String.format("Vegetable %s already in salad", veg.getType().name()));
+                        }
+                        break;
+                    case 3:
+                        String newSaladName = getInputAndNotify("Please enter a name for the salad").nextLine();
+                        boolean saladIsExist = salads.stream().anyMatch(s -> s.getName().equalsIgnoreCase(newSaladName));
+                        if (!saladIsExist && vegetablesForSalad.size() != 0) {
+                            Salad newSalad = Salad.builder()
+                                    .name(newSaladName)
+                                    .ingredients(new ArrayList<>(vegetablesForSalad))
+                                    .build();
+                            salads.add(newSalad);
+                            vegetablesForSalad.clear();
+                            System.out.println(String.format("Salad %s was created", newSalad.getName()));
+                        } else {
+                            System.out.println("Failed to create salad, salad is exist or vegetables for salad is empty");
+                        }
+                        break;
+                    case 4:
+                        Salad desiredSalad = getSalad(getInputAndNotify("Salad name for searching").nextLine());
+                        desiredSalad.printSortedIngredients();
+                        desiredSalad.getTotalCalories();
+                        break;
+                    case 5:
+                        for(Salad salad: salads) System.out.println(salad.toString());
+                        break;
+                    case 6:
+                        Salad saladForFindVegetablesByRange = getSalad(
+                                getInputAndNotify("Salad name for searching").nextLine());
+                        int caloriesStartRange = getInputAndNotify("Calories start range").nextInt();
+                        int caloriesEndRange = getInputAndNotify("Calories end range").nextInt();
+                        for (Vegetable ingredient: saladForFindVegetablesByRange.getIngredients()) {
+                            if (ingredient.getCalories() > caloriesStartRange && ingredient.getCalories() < caloriesEndRange) {
+                                System.out.println(ingredient);
+                            }
+                        }
+                        break;
+                    case 0:
+                        isRunning = false;
+                }
+            } catch (IllegalArgumentException | NotZeroOrNegativeException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
